@@ -124,8 +124,8 @@
 #define MY_CMPID            123     // teensy component id
 #define GB_SYSID            71      // gimbal system id
 #define GB_CMPID            67      // gimbal component id
-
-//#define AC_VERSION          "3.2"
+#define MAXCELLS            5       // configure number maximum connected analog inputs(cells). If you build an six cell network then MAXCELLS is 6
+ //#define AC_VERSION          3.2
 #define AC_VERSION          "3.3"
 /*
  * *******************************************************
@@ -138,9 +138,9 @@
 #define USE_AP_VOLTAGE_BATTERY_FROM_SINGLE_CELL_MONITOR // Use this only with enabled USE_SINGLE_CELL_MONITOR
 #define USE_RC_CHANNELS                                 // Use of RC_CHANNELS Informations ( RAW Input Valus of FC ) - enable if you use TEENSY_LED_SUPPORT.
 #define USE_TEENSY_LED_SUPPORT                          // Enable LED-Controller functionality
-
+//#define POLLING_ENABLED                                 // Enable Sensor Polling - for use with Ultimate LRS (where Teensy connected to Taranis S.Port input directly).
 #define SEND_STATUS_TEXT_MESSAGE                        // Enable sending Status Text Messages to RC - comment out if not required
-#define AUTO_MAV_STREAM_CFG                             // Enable auto Mavlink SRn_ configuration - comment out for manual stream rate configuration
+//#define AUTO_MAV_STREAM_CFG                             // Enable auto Mavlink SRn_ configuration - comment out for manual stream rate configuration
 
 /*
  * *******************************************************
@@ -187,9 +187,7 @@
  * *** Variables Definitions:                          ***
  * *******************************************************
  */
-// configure number maximum connected analog inputs(cells)
-// if you build an six cell network then MAXCELLS is 6
-#define MAXCELLS 5
+
 
 /*
  * *******************************************************
@@ -376,6 +374,9 @@ bool          telemetry_initialized =     0;  // Is FrSkySPort Telemetry initial
 void setup()  {
 
  // delay(100000);
+	Serial.print(" inicializando ");
+
+
 
   #ifdef USE_SINGLE_CELL_MONITOR
     // Set your custom values (double) for LSCM software divider here.

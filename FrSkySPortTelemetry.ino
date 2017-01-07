@@ -70,7 +70,7 @@ FrSkySportSensorFcs fcs;                               // Create FCS sensor with
 #endif
 FrSkySportSensorFuel fuel;                             // Create FUEL sensor with default ID
 #ifdef SEND_STATUS_TEXT_MESSAGE
-FrSkySportSensorStatus txtmsg(FrSkySportSensor::ID9);                             // Create FUEL sensor with given ID
+FrSkySportSensorStatus txtmsg(FrSkySportSensor::ID9);                             // Create 
 #endif
 
 #if defined USE_SINGLE_CELL_MONITOR || defined USE_FLVSS_FAKE_SENSOR_DATA
@@ -267,11 +267,11 @@ void FrSkySportTelemetry_FCS() {
 	  //FASCurrent = readAndResetAverageCurrent();            // read Average Current
 #ifdef DEBUG_FrSkySportTelemetry_FCS
 		debugSerial.print(millis());
-		debugSerial.println("FrSkySportTelemetry_FAS:");
-		debugSerial.print("\tVFAS (0x0210): ");
-		debugSerial.print(FASVoltage / 10.0);
+		debugSerial.println("FrSkySportTelemetry_FCS:");
+		debugSerial.print("\tVFCS (0x0210): ");
+		debugSerial.print(FCSVoltage / 10.0);
 		debugSerial.print("\tCurr (0x0200): ");
-		//debugSerial.print(FASCurrent);
+		//debugSerial.print(FCSCurrent);
 		debugSerial.print(ap_current_battery / 100.0);
 		debugSerial.println();
 #endif

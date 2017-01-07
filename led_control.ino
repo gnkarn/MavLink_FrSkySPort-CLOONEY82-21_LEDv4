@@ -72,9 +72,9 @@
 int LED_MODE_SWITCH;
 int LED_DIMM_CHAN;
 #else
-  #define LED_MODE_SWITCH 15   // Channel Number of RC Channel used for manual Lightmode
-  #define LED_DIMM_CHAN   16   // Channel Number of RC Channel used for dimming LEDs
-  #define LED_BPM_CHAN   14   // Channel Number of RC Channel used for BPM LEDs
+  #define LED_MODE_SWITCH 15-1   // Channel Number of RC Channel used for manual Lightmode
+  #define LED_DIMM_CHAN   16-1   // Channel Number of RC Channel used for dimming LEDs
+  #define LED_BPM_CHAN   14-1  // Channel Number of RC Channel used for BPM LEDs
 #endif
 
 
@@ -88,11 +88,11 @@ int LED_DIMM_CHAN;
 #define NUM_ARMS 3
 #define NUM_LEDS_PER_STRIP 50
 #define BRIGHTNESS          96
-#define FRAMES_PER_SECOND   30
+#define FRAMES_PER_SECOND   48
 #define NUM_LEDS_PER_ARM    36
 #define NUM_LEDS NUM_LEDS_PER_ARM*NUM_ARMS      // Number of LED's
 CRGB Vir_led[NUM_LEDS]     ;                      // simula una tira continua con todos los leds de cada brazo conectados en serie
-#define BRIGHTNESS          96
+#define BRIGHTNESS          255
 #define DATA_PIN    6
 
 CRGB leds[NUM_ARMS][NUM_LEDS_PER_STRIP]; // 
@@ -108,7 +108,7 @@ int state_RIGHT = 0;
 int state_ARMED = 0;
 
 float dim = 100; // variable global para dim
-int gbpm = 60 ; // variable global para efectos de led que quiero variar desde el SD del remoto
+int gbpm = 64 ; // variable global para efectos de led que quiero variar desde el SD del remoto
 
 //###################################################################################################
 //### EFECTOS                                                                              ###
@@ -233,7 +233,7 @@ void Teensy_LED_Init() {   // comment in SIMULATION_MODE
   Serial.begin(9600);
 #endif
 
-// test de leds
+// test de leds habilitar
 
   for (int i = 0; i < 50; i++) {
         leds[0][i] = CHSV(0, 255, 5*i);
@@ -251,28 +251,28 @@ void Teensy_LED_Init() {   // comment in SIMULATION_MODE
         delay(20);
           }
 
- // fin test de leds  
+ // fin test de leds
+  FastLED.delay(3000);
 
- // ***********test de efecto
+ // ***********test de efecto ( habilitar)
  // ***************void HeliLed (int bpm , int hue,float dim  )
+  //   comentar bloque para  -   ANULAR TEST DE EFECTOS
+
+
   for (int i = 0; i < 3000; i++) {
  //        HeliLed ( 100 , 0 , 200 );
   // Call the current pattern function once, updating the 'leds' array
    gPatterns[gCurrentPatternNumber](); // habilitar esto
-
- 
- 
   
   FastLED.show(); // display this frame
   FastLED.delay(1000 / FRAMES_PER_SECOND );// 60 FRAMESPERSECOND
-
- 
 
    // do some periodic updates
   EVERY_N_MILLISECONDS(20) { gHue++; } // slowly cycle the "base color" through the rainbow
   EVERY_N_SECONDS(10) { nextPattern(); } // change patterns periodically
   //EVERY_N_MILLISECONDS(60000/g_bpm){g_bpm = (g_bpm*2) % 80 ; } // 60000/bpm es el tiempo  que se tarda en dar una vuelta 
   }
+
       
 }
 
@@ -308,10 +308,11 @@ void loop() {         // uncomment in SIMULATION_MODE
     * from MavLink_FrSkySPort.ino
     * ap_chan_raw[i]  => RC channel i input value, in microseconds. A value of UINT16_MAX (65535U)
     */
-    Serial.print("led mode switch : "); //debug
-    Serial.print(ap_chan_raw[LED_MODE_SWITCH]); // debug
+    //Serial.print("led mode sw : "); //debug
+    //Serial.print(ap_chan_raw[LED_MODE_SWITCH]); // debug
     gbpm = map(ap_chan_raw[LED_BPM_CHAN],1000,2000,2,200);          // varia el gbpm en mas o en menos en funcion del valor del canal 17 
-
+	//Serial.print(" gbpm "); //debug
+	//Serial.println(gbpm);	//debug
     
     if (ap_chan_raw[LED_MODE_SWITCH] <= 1000) {
       get_mode();   // DEFAULT, LED Mode - auto set by FC
@@ -363,6 +364,8 @@ void loop() {         // uncomment in SIMULATION_MODE
   dim = dim / 100;  // ver si esta linea hace falta -- probar.
 
   switch (LED_MODE) {
+	 
+
   case 1:   // NO_GPS Flight modes
     default_mode(ON, dim);
     break;
@@ -469,9 +472,13 @@ void loop() {         // uncomment in SIMULATION_MODE
   }
    //ThrotleLed (int brazo , int posicion, int LedsNum, int hue, float dim  )
     ThrotleLed (0, 2, 13, 200,  dim  );
-    
+	// Serial.print(" dim "); //debug
+	//Serial.println(dim);	//debug toma valores float de 0 a 1
+
   FastLED.show();
   lastmillis = currentmillis;
+  //Serial.print(" LedMode ");  //debug
+  //Serial.println(LED_MODE);		//debug
 }
 
 //#####################################################################################################
@@ -1163,8 +1170,8 @@ void bpm()
     Vir_led[i] = ColorFromPalette(palette, gHue + (i * 2), beat - gHue + (i * 10));
   }
   vled_draw(); // draw from virtual to fisical leds
-  Serial.print(" bpm : ");
-  Serial.print(gbpm);
+  //Serial.print(" bpm : ");
+  //Serial.print(gbpm);
 }
 
 void juggle() {
@@ -1177,9 +1184,6 @@ void juggle() {
   }
   vled_draw(); // draw from virtual to fisical leds
 }
-
-
-
 
 
 
